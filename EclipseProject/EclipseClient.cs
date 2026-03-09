@@ -28,51 +28,57 @@ namespace EclipseProject
         internal static GrpcChannel? Channel {get; set;}
         public static async Task Initialize()
         {
-            Channel = GrpcChannel.ForAddress("http://127.0.0.1:5000");
-                api = MagicOnionClient.Create<IDiracService>(Channel);
+            ICollection<string>? addresses = SecureStore.Get<ICollection<string>>("Eclipse Server");
+            if (addresses == null || addresses.Count == 0)
+                throw new Exception("Server instances not found in SecureStore.");
 
-                // enrollment, create clientId/PSK and SecureStore them. server will have access if it's with the same user
-                SecureRandom rand = new SecureRandom();
-                byte[] PSK = new byte[32];
-                string clientId = Guid.NewGuid().ToString();
+            string serverAddr = addresses.First();
+            
+            Channel = GrpcChannel.ForAddress(serverAddr);
+            api = MagicOnionClient.Create<IDiracService>(Channel);
 
-                rand.NextBytes(PSK);
-                SecureStore.Set(clientId, PSK);
+            // enrollment, create clientId/PSK and SecureStore them. server will have access if it's with the same user
+            SecureRandom rand = new SecureRandom();
+            byte[] PSK = new byte[32];
+            string clientId = Guid.NewGuid().ToString();
 
-                Dictionary<string, byte[]> pubKey = await api.EnrollAsync("demo", clientId);
+            rand.NextBytes(PSK);
+            SecureStore.Set(clientId, PSK);
 
-                // handshake begin
-                var secretResult = Keys.CreateSecret(pubKey);
-                var sharedSecret = secretResult.key;
-                var cipher = secretResult.text;
-                byte[] nonceC = new byte[16];
+            Dictionary<string, byte[]> pubKey = await api.EnrollAsync("demo", clientId);
 
-                rand.NextBytes(nonceC);
-                var serverResp = await api.BeginHandshakeAsync(clientId, cipher, nonceC);
+            // handshake begin
+            var secretResult = Keys.CreateSecret(pubKey);
+            var sharedSecret = secretResult.key;
+            var cipher = secretResult.text;
+            byte[] nonceC = new byte[16];
 
-                var keys = PrepareKeys(PSK, nonceC, serverResp.nonceS, sharedSecret);
+            rand.NextBytes(nonceC);
+            var serverResp = await api.BeginHandshakeAsync(clientId, cipher, nonceC);
 
-                byte[] transcriptHash;
-                using (var sha256 = SHA256.Create())
-                    transcriptHash = sha256.ComputeHash(ByteArrayExtensions.Combine(Encoding.UTF8.GetBytes(clientId), cipher, nonceC, serverResp.nonceS, serverResp.sessionId, BitConverter.GetBytes(serverResp.epoch)));
+            var keys = PrepareKeys(PSK, nonceC, serverResp.nonceS, sharedSecret);
 
-                clientChannel = new AeadChannel(keys.k_c2s, serverResp.sessionId, clientId, 1, new Transcript(transcriptHash, "client-finished"));
-                serverChannel = new AeadChannel(keys.k_s2c, serverResp.sessionId, clientId, 1, new Transcript(transcriptHash, "server-finished"));
+            byte[] transcriptHash;
+            using (var sha256 = SHA256.Create())
+                transcriptHash = sha256.ComputeHash(ByteArrayExtensions.Combine(Encoding.UTF8.GetBytes(clientId), cipher, nonceC, serverResp.nonceS, serverResp.sessionId, BitConverter.GetBytes(serverResp.epoch)));
 
-                if (clientChannel.transcript.proof == null || serverChannel.transcript.proof == null)
+            clientChannel = new AeadChannel(keys.k_c2s, serverResp.sessionId, clientId, 1, new Transcript(transcriptHash, "client-finished"));
+            serverChannel = new AeadChannel(keys.k_s2c, serverResp.sessionId, clientId, 1, new Transcript(transcriptHash, "server-finished"));
+
+            if (clientChannel.transcript.proof == null || serverChannel.transcript.proof == null)
+            {
+                throw new Exception("Invalid HMAC proof");
+            }
+
+            byte[] serverTranscriptRaw = await api.FinishHandshakeAsync(clientId, clientChannel.transcript.proof);
+
+            for (int i = 0; i < serverTranscriptRaw.Length; i++)
+            {
+                if (serverTranscriptRaw[i] != serverChannel.transcript.proof[i])
                 {
-                    throw new Exception("Invalid HMAC proof");
+                    throw new Exception("Incorrect transcript HMAC");
                 }
-
-                byte[] serverTranscriptRaw = await api.FinishHandshakeAsync(clientId, clientChannel.transcript.proof);
-
-                for (int i = 0; i < serverTranscriptRaw.Length; i++)
-                {
-                    if (serverTranscriptRaw[i] != serverChannel.transcript.proof[i])
-                    {
-                        throw new Exception("Incorrect transcript HMAC");
-                    }
-                }
+            }
         }
             public static async Task<T> InvokeAsync<T>(string methodName, params (string key, object? value)[] args){
             if (clientChannel == null || serverChannel == null || api == null)
