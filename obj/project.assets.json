@@ -1902,6 +1902,43 @@
         "runtime": {
           "lib/netstandard1.3/System.Xml.XDocument.dll": {}
         }
+      },
+      "EclipseLCL/1.0.0": {
+        "type": "project",
+        "framework": ".NETStandard,Version=v2.1",
+        "dependencies": {
+          "MagicOnion.Abstractions": "7.10.0",
+          "MagicOnion.Client": "7.10.0"
+        },
+        "compile": {
+          "bin/placeholder/EclipseLCL.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/EclipseLCL.dll": {}
+        }
+      },
+      "EclipseProject/1.0.0": {
+        "type": "project",
+        "framework": ".NETStandard,Version=v2.1",
+        "dependencies": {
+          "BouncyCastle.NetCore": "2.2.1",
+          "Ceras": "4.1.7",
+          "Data.HashFunction.Blake3": "3.1.2",
+          "EasyCompressor.LZ4": "2.1.0",
+          "EclipseLCL": "1.0.0",
+          "K4os.Compression.LZ4": "1.3.8",
+          "Konscious.Security.Cryptography.Argon2": "1.3.1",
+          "MagicOnion.Abstractions": "7.10.0",
+          "MagicOnion.Client": "7.10.0",
+          "Newtonsoft.Json": "13.0.4",
+          "System.Data.HashFunction.Interfaces": "2.0.0"
+        },
+        "compile": {
+          "bin/placeholder/EclipseProject.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/EclipseProject.dll": {}
+        }
       }
     }
   },
@@ -6103,6 +6140,16 @@
         "system.xml.xdocument.4.3.0.nupkg.sha512",
         "system.xml.xdocument.nuspec"
       ]
+    },
+    "EclipseLCL/1.0.0": {
+      "type": "project",
+      "path": "EclipseLCL/EclipseLCL.csproj",
+      "msbuildProject": "EclipseLCL/EclipseLCL.csproj"
+    },
+    "EclipseProject/1.0.0": {
+      "type": "project",
+      "path": "EclipseProject/EclipseProject.csproj",
+      "msbuildProject": "EclipseProject/EclipseProject.csproj"
     }
   },
   "projectFileDependencyGroups": {
@@ -6111,6 +6158,8 @@
       "Ceras >= 4.1.7",
       "Data.HashFunction.Blake3 >= 3.1.2",
       "EasyCompressor.LZ4 >= 2.1.0",
+      "EclipseLCL >= 1.0.0",
+      "EclipseProject >= 1.0.0",
       "K4os.Compression.LZ4 >= 1.3.8",
       "Konscious.Security.Cryptography.Argon2 >= 1.3.1",
       "MagicOnion.Abstractions >= 7.10.0",
@@ -6125,11 +6174,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/home/john/Downloads/XRUIOS.Dirac/XRUIOS.Dirac.csproj",
+      "projectUniqueName": "/home/john/Downloads/XRUIOS.Dirac/XRUIOS.Dirac/XRUIOS.Dirac.csproj",
       "projectName": "XRUIOS.Dirac",
-      "projectPath": "/home/john/Downloads/XRUIOS.Dirac/XRUIOS.Dirac.csproj",
+      "projectPath": "/home/john/Downloads/XRUIOS.Dirac/XRUIOS.Dirac/XRUIOS.Dirac.csproj",
       "packagesPath": "/home/john/.nuget/packages/",
-      "outputPath": "/home/john/Downloads/XRUIOS.Dirac/obj/",
+      "outputPath": "/home/john/Downloads/XRUIOS.Dirac/XRUIOS.Dirac/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/home/john/.nuget/NuGet/NuGet.Config"
@@ -6143,7 +6192,14 @@
       "frameworks": {
         "netstandard2.1": {
           "targetAlias": "netstandard2.1",
-          "projectReferences": {}
+          "projectReferences": {
+            "/home/john/Downloads/XRUIOS.Dirac/XRUIOS.Dirac/EclipseLCL/EclipseLCL.csproj": {
+              "projectPath": "/home/john/Downloads/XRUIOS.Dirac/XRUIOS.Dirac/EclipseLCL/EclipseLCL.csproj"
+            },
+            "/home/john/Downloads/XRUIOS.Dirac/XRUIOS.Dirac/EclipseProject/EclipseProject.csproj": {
+              "projectPath": "/home/john/Downloads/XRUIOS.Dirac/XRUIOS.Dirac/EclipseProject/EclipseProject.csproj"
+            }
+          }
         }
       },
       "warningProperties": {

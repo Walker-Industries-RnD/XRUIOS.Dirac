@@ -28,7 +28,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\EclipseProject\EclipseProject.csproj" />
-    <ProjectReference Include="..\EclipseLCL\EclipseLCL.csproj" />
+    <Compile Remove="EclipseProject\**" />
+    <Compile Remove="EclipseLCL\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="EclipseProject\EclipseProject.csproj" />
+    <ProjectReference Include="EclipseLCL\EclipseLCL.csproj" />
   </ItemGroup>
 </Project>

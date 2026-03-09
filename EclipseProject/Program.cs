@@ -9,8 +9,6 @@ namespace EclipseProject
         {
             
             await EclipseClient.Initialize();
-            var g = EclipseClient.ListFunctions();
-            Console.WriteLine("done");
         }
     }
 }

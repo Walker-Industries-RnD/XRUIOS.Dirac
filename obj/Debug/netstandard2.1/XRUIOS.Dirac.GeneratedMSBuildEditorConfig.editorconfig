@@ -1,6 +1,6 @@
 is_global = true
 build_property.RootNamespace = XRUIOS.Dirac
-build_property.ProjectDir = /home/john/Downloads/XRUIOS.Dirac/
+build_property.ProjectDir = /home/john/Downloads/XRUIOS.Dirac/XRUIOS.Dirac/
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.CsWinRTUseWindowsUIXamlProjections = false

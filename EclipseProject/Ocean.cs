@@ -2,7 +2,6 @@
 using MagicOnion;
 using MessagePack;
 using MessagePack.Resolvers;
-using Microsoft.AspNetCore.Authentication;
 using Org.BouncyCastle.Asn1.X509.Qualified;
 using Pariah_Cybersecurity;
 using System;
@@ -11,6 +10,10 @@ using System.Linq;
 using System.Reflection;
 using static EclipseProject.Security;
 using static Pariah_Cybersecurity.DataHandler;
+using System.Threading;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System;
 
 namespace EclipseProject
 {
@@ -31,7 +34,7 @@ namespace EclipseProject
 
 
         //All our registered functions
-        internal Dictionary<string, List<RegisteredFunction>> Ark = new();
+        internal Dictionary<string, List<RegisteredFunction>> Ark = new Dictionary<string, List<RegisteredFunction>>();
 
         //We will only flood blessed land, so we will only register functions with the SeaOfDirac attribute
         private System.Reflection.Assembly localAssembly = Assembly.GetExecutingAssembly();
@@ -145,7 +148,7 @@ namespace EclipseProject
                 byte[] serializedResult;
                 if (result == null)
                 {
-                    serializedResult = [];
+                    serializedResult = new byte[0];
                 }
                 else if (IsXruiosType(result.GetType()))
                 {
@@ -221,7 +224,7 @@ namespace EclipseProject
         private static Dictionary<string, object?> SnapshotFields(object item)
         {
             Type itemType = item.GetType();
-            Dictionary<string, object?> fields = new();
+            Dictionary<string, object?> fields = new Dictionary<string, object?>();
             foreach (var field in itemType.GetFields(BindingFlags.Public | BindingFlags.Instance))
                 fields[field.Name] = field.GetValue(item);
             foreach (var prop in itemType.GetProperties(BindingFlags.Public | BindingFlags.Instance).Where(p => p.CanRead))
@@ -240,7 +243,7 @@ namespace EclipseProject
 
         private static bool IsXruiosDictionary(Type type)
         {
-            var dictIface = type.GetInterfaces().Concat([type])
+            var dictIface = new[] { type }.Concat(type.GetInterfaces())
                 .FirstOrDefault(t => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IDictionary<,>));
             if (dictIface == null) return false;
             return IsXruiosType(dictIface.GetGenericArguments()[1]);
@@ -255,7 +258,7 @@ namespace EclipseProject
                 elementType = type.GetElementType();
                 return elementType != null && IsXruiosType(elementType);
             }
-            var enumerableIface = type.GetInterfaces().Concat([type])
+            var enumerableIface = new[] { type }.Concat(type.GetInterfaces())
                 .FirstOrDefault(t => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IEnumerable<>));
             if (enumerableIface != null)
             {

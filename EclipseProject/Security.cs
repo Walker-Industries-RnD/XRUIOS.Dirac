@@ -12,6 +12,14 @@ using EclipseLCL;
 using MessagePack.Resolvers;
 using Org.BouncyCastle.Crypto.Digests;
 using Org.BouncyCastle.Tls;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Threading;
+using System;
+using System.IO;
+using Org.BouncyCastle.Crypto.Generators;
+using Org.BouncyCastle.Crypto.Parameters;
+using Org.BouncyCastle.Crypto.Digests;
 
 namespace EclipseProject
 {
@@ -39,10 +47,19 @@ namespace EclipseProject
         {
             byte[] salt = ByteArrayExtensions.Combine(PSK, nonceC, nonceS);
 
-            byte[] PRK = HKDF.Extract(HashAlgorithmName.SHA256, sharedSecret, SHA256.HashData(salt));
+            byte[] saltHash;
+            using (var sha = SHA256.Create())
+                saltHash = sha.ComputeHash(salt);
 
-            byte[] k_c2s = HKDF.Expand(HashAlgorithmName.SHA256, PRK, 32, Encoding.UTF8.GetBytes("c2s"));
-            byte[] k_s2c = HKDF.Expand(HashAlgorithmName.SHA256, PRK, 32, Encoding.UTF8.GetBytes("s2c"));
+            var hkdf = new HkdfBytesGenerator(new Sha256Digest());
+
+            byte[] k_c2s = new byte[32];
+            hkdf.Init(new HkdfParameters(sharedSecret, saltHash, Encoding.UTF8.GetBytes("c2s")));
+            hkdf.GenerateBytes(k_c2s, 0, 32);
+
+            byte[] k_s2c = new byte[32];
+            hkdf.Init(new HkdfParameters(sharedSecret, saltHash, Encoding.UTF8.GetBytes("s2c")));
+            hkdf.GenerateBytes(k_s2c, 0, 32);
 
             return (k_c2s, k_s2c);
         }
@@ -108,7 +125,7 @@ namespace EclipseProject
                     throw new ArgumentException("sessionId8 must be exactly 8 bytes.", nameof(sessionId8));
 
                 _aead?.Dispose();
-                _aead = new AesGcm(key32, tagSizeInBytes: 16);
+                _aead = new AesGcm(key32);
 
                 _sessionId8 = (byte[])sessionId8.Clone();
                 Epoch = epoch;
@@ -168,7 +185,7 @@ namespace EclipseProject
                 if (env.Ciphertext.Length == 0)
                 {
                     _recvSeq = env.Seq;
-                    return [];
+                    return new byte[0];
                 }
 
                 byte[] nonce12 = MakeNonce12(_sessionId8, env.Seq);
@@ -214,7 +231,7 @@ namespace EclipseProject
             /// Deserialize a <see cref="DiracResponse"/> from <paramref name="serializedResp"/>,
             /// assert success, then decrypt and deserialize the result as <typeparamref name="T"/>.
             /// </summary>
-            public T? UnpackResponse<T>(byte[] serializedResp)
+            public T UnpackResponse<T>(byte[] serializedResp)
             {
                 DiracResponse resp = MessagePackSerializer.Deserialize<DiracResponse>(serializedResp, ContractlessStandardResolver.Options);
                 if (!resp.Success)
@@ -225,6 +242,11 @@ namespace EclipseProject
                 if (plaintext.Length == 0)
                 {
                     return default;
+                }
+
+                if (plaintext == null)
+                {
+                    throw new Exception("Function failed, no data.");
                 }
 
                 // if T is DiracResponse, void assumed so return DiracResponse. otherwise return plaintext
@@ -242,7 +264,7 @@ namespace EclipseProject
             public void Dispose()
             {
                 _aead?.Dispose();
-                if (_sessionId8 is not null)
+                if (!(_sessionId8 is null))
                     CryptographicOperations.ZeroMemory(_sessionId8);
             }
 
@@ -280,16 +302,16 @@ namespace EclipseProject
         [MessagePackObject(keyAsPropertyName: true)]
         public sealed class EncryptedEnvelope
         {
-            public string ClientId { get; init; } = "";
-            public uint Epoch { get; init; }
-            public uint Seq { get; init; }
-            public string Method { get; init; } = "";
-            public byte[] Ciphertext { get; init; } = Array.Empty<byte>();
-            public byte[] Tag { get; init; } = Array.Empty<byte>(); // 16 bytes
+            public string ClientId { get; set; } = "";
+            public uint Epoch { get; set; }
+            public uint Seq { get; set; }
+            public string Method { get; set; } = "";
+            public byte[] Ciphertext { get; set; } = Array.Empty<byte>();
+            public byte[] Tag { get; set; } = Array.Empty<byte>(); // 16 bytes
         }
         public sealed class SessionState : IDisposable
         {
-            public Dictionary<string, object?> Vault { get; init; } = new Dictionary<string, object?>();
+            public Dictionary<string, object?> Vault { get; set; } = new Dictionary<string, object?>();
             public string ClientId { get; }
             public byte[] SessionId8 { get; }           // 8 bytes, not super sensitive
             public uint Epoch { get; private set; }
@@ -320,9 +342,9 @@ namespace EclipseProject
 
         public sealed class SessionStore : IDisposable
         {
-            private readonly ConcurrentDictionary<string, SessionState> _sessions = new();
+            private readonly ConcurrentDictionary<string, SessionState> _sessions = new ConcurrentDictionary<string, SessionState>();
             private readonly TimeSpan _idleTimeout = TimeSpan.FromMinutes(10);
-            private readonly CancellationTokenSource _cts = new();
+            private readonly CancellationTokenSource _cts = new CancellationTokenSource();
 
             public SessionStore()
             {
@@ -373,7 +395,14 @@ namespace EclipseProject
                                 removed.Dispose();
                         }
                     }
-                    await Task.Delay(TimeSpan.FromSeconds(30), ct);
+                    try
+                    {
+                        await Task.Delay(TimeSpan.FromSeconds(30), ct);
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        return;
+                    }
                 }
             }
 

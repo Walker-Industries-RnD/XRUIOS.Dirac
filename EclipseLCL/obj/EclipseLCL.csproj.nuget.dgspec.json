@@ -1,30 +1,30 @@
 {
   "format": 1,
   "restore": {
-    "/home/john/Downloads/XRUIOS_BAREBONES/XRUIOS.Barebones/XRUIOS.Misc/EclipseLCL/EclipseLCL.csproj": {}
+    "/home/john/Downloads/XRUIOS.Dirac/XRUIOS.Dirac/EclipseLCL/EclipseLCL.csproj": {}
   },
   "projects": {
-    "/home/john/Downloads/XRUIOS_BAREBONES/XRUIOS.Barebones/XRUIOS.Misc/EclipseLCL/EclipseLCL.csproj": {
+    "/home/john/Downloads/XRUIOS.Dirac/XRUIOS.Dirac/EclipseLCL/EclipseLCL.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/john/Downloads/XRUIOS_BAREBONES/XRUIOS.Barebones/XRUIOS.Misc/EclipseLCL/EclipseLCL.csproj",
+        "projectUniqueName": "/home/john/Downloads/XRUIOS.Dirac/XRUIOS.Dirac/EclipseLCL/EclipseLCL.csproj",
         "projectName": "EclipseLCL",
-        "projectPath": "/home/john/Downloads/XRUIOS_BAREBONES/XRUIOS.Barebones/XRUIOS.Misc/EclipseLCL/EclipseLCL.csproj",
+        "projectPath": "/home/john/Downloads/XRUIOS.Dirac/XRUIOS.Dirac/EclipseLCL/EclipseLCL.csproj",
         "packagesPath": "/home/john/.nuget/packages/",
-        "outputPath": "/home/john/Downloads/XRUIOS_BAREBONES/XRUIOS.Barebones/XRUIOS.Misc/EclipseLCL/obj/",
+        "outputPath": "/home/john/Downloads/XRUIOS.Dirac/XRUIOS.Dirac/EclipseLCL/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/home/john/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
-          "net8.0"
+          "netstandard2.1"
         ],
         "sources": {
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
-          "net8.0": {
-            "targetAlias": "net8.0",
+          "netstandard2.1": {
+            "targetAlias": "netstandard2.1",
             "projectReferences": {}
           }
         },
@@ -41,10 +41,14 @@
         "SdkAnalysisLevel": "10.0.100"
       },
       "frameworks": {
-        "net8.0": {
-          "targetAlias": "net8.0",
+        "netstandard2.1": {
+          "targetAlias": "netstandard2.1",
           "dependencies": {
-            "MagicOnion": {
+            "MagicOnion.Abstractions": {
+              "target": "Package",
+              "version": "[7.10.0, )"
+            },
+            "MagicOnion.Client": {
               "target": "Package",
               "version": "[7.10.0, )"
             }
@@ -62,20 +66,16 @@
           "warn": true,
           "downloadDependencies": [
             {
-              "name": "Microsoft.AspNetCore.App.Ref",
-              "version": "[8.0.24, 8.0.24]"
-            },
-            {
-              "name": "Microsoft.NETCore.App.Ref",
-              "version": "[8.0.24, 8.0.24]"
+              "name": "NETStandard.Library.Ref",
+              "version": "[2.1.0, 2.1.0]"
             }
           ],
           "frameworkReferences": {
-            "Microsoft.NETCore.App": {
+            "NETStandard.Library": {
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/home/john/.dotnet/sdk/10.0.103/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/home/john/.dotnet/sdk/10.0.103/RuntimeIdentifierGraph.json"
         }
       }
     }
