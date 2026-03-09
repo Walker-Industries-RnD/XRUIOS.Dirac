@@ -1,0 +1,5 @@
+/home/john/Downloads/XRUIOS.Dirac/obj/Debug/netstandard2.1/XRUIOS.Dirac.csproj.AssemblyReference.cache
+/home/john/Downloads/XRUIOS.Dirac/obj/Debug/netstandard2.1/XRUIOS.Dirac.GeneratedMSBuildEditorConfig.editorconfig
+/home/john/Downloads/XRUIOS.Dirac/obj/Debug/netstandard2.1/XRUIOS.Dirac.AssemblyInfoInputs.cache
+/home/john/Downloads/XRUIOS.Dirac/obj/Debug/netstandard2.1/XRUIOS.Dirac.AssemblyInfo.cs
+/home/john/Downloads/XRUIOS.Dirac/obj/Debug/netstandard2.1/XRUIOS.Dirac.csproj.CoreCompileInputs.cache
