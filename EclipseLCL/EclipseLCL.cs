@@ -20,6 +20,8 @@ namespace EclipseLCL
         [DataMember] public List<DiracPackage>? Collection;
         [DataMember] public Dictionary<string, DiracPackage>? Map;
 
+        public DiracPackage() { }
+
         public DiracPackage(string uuid, Type objType, Dictionary<string, object?> fields)
         {
             UUID = uuid;

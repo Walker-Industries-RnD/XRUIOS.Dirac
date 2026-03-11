@@ -27,8 +27,8 @@ namespace ClientFunctions
                     => await EclipseClient.InvokeAsync<ValueTuple<string, string>>("CreatorClass.CreatorFileClass.GetCreatorOverview",
                         ("CreatorName", name), ("CreatorType", category));
 
-                public static async Task<List<DiracPackage>?> GetCreatorFiles(string name, string category)
-                    => await EclipseClient.InvokeAsync<List<DiracPackage>>("CreatorClass.CreatorFileClass.GetCreatorFiles",
+                public static async Task<DiracPackage?> GetCreatorFiles(string name, string category)
+                    => await EclipseClient.InvokeAsync<DiracPackage>("CreatorClass.CreatorFileClass.GetCreatorFiles",
                         ("CreatorName", name), ("CreatorType", category));
 
                 public static async Task<DiracResponse?> AddFile(string name, string category, List<string> files)
@@ -39,7 +39,7 @@ namespace ClientFunctions
                     => await EclipseClient.InvokeAsync<DiracResponse>("CreatorClass.CreatorFileClass.SetDescription",
                         ("CreatorName", name), ("CreatorType", category), ("Description", description));
 
-                public static async Task<DiracResponse?> RemoveFiles(string name, string category, List<DiracPackage> files)
+                public static async Task<DiracResponse?> RemoveFiles(string name, string category, DiracPackage files)
                     => await EclipseClient.InvokeAsync<DiracResponse>("CreatorClass.CreatorFileClass.RemoveFiles",
                         ("CreatorName", name), ("CreatorType", category), ("filesToRemove", files));
             }

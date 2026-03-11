@@ -33,10 +33,10 @@ namespace ClientFunctions
         public static async Task<DiracPackage?> CreateLap(string id)
             => await EclipseClient.InvokeAsync<DiracPackage>("StopwatchClass.CreateLap", ("id", id));
 
-        public static async Task<List<DiracPackage>?> DestroyStopwatch(string id)
-            => await EclipseClient.InvokeAsync<List<DiracPackage>>("StopwatchClass.DestroyStopwatch", ("id", id));
+        public static async Task<DiracPackage?> DestroyStopwatch(string id)
+            => await EclipseClient.InvokeAsync<DiracPackage>("StopwatchClass.DestroyStopwatch", ("id", id));
 
-        public static async Task<DiracResponse?> SaveStopwatchValuesAsSheet(List<DiracPackage> Values, DateTime RecordedOn, string FileName)
+        public static async Task<DiracResponse?> SaveStopwatchValuesAsSheet(DiracPackage Values, DateTime RecordedOn, string FileName)
             => await EclipseClient.InvokeAsync<DiracResponse>("StopwatchClass.SaveStopwatchValuesAsSheet",
                 ("Values", Values), ("RecordedOn", RecordedOn), ("FileName", FileName));
     }

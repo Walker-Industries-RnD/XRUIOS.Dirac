@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("XRUIOS.Dirac")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+18def22d150f4905c64d4d9be069b9c57179be9a")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+cd451f7aaec3d0fbede7c8f4190972a74356a9fd")]
 [assembly: System.Reflection.AssemblyProductAttribute("XRUIOS.Dirac")]
 [assembly: System.Reflection.AssemblyTitleAttribute("XRUIOS.Dirac")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

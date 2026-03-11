@@ -9,9 +9,9 @@ namespace ClientFunctions
     {
         // FileRecord (YuukoProtocol): { string UUID, string File }
 
-        public static async Task<List<DiracPackage>?> GetRecentlyRecorded()
+        public static async Task<DiracPackage?> GetRecentlyRecorded()
         {
-            return await EclipseClient.InvokeAsync<List<DiracPackage>>("RecentlyRecordedClass.GetRecentlyRecorded");
+            return await EclipseClient.InvokeAsync<DiracPackage>("RecentlyRecordedClass.GetRecentlyRecorded");
         }
 
         

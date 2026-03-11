@@ -35,9 +35,9 @@ namespace ClientFunctions
         }
 
         
-        public static async Task<Dictionary<string, List<DiracPackage>>?> GetProcessesByType()
+        public static async Task<DiracPackage?> GetProcessesByType()
         {
-            return await EclipseClient.InvokeAsync<Dictionary<string, List<DiracPackage>>>("ProcessesClass.GetProcessesByType");
+            return await EclipseClient.InvokeAsync<DiracPackage>("ProcessesClass.GetProcessesByType");
         }
 
         
